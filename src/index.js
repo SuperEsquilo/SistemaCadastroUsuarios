@@ -38,7 +38,7 @@ toastStyle.textContent = `
 document.head.appendChild(toastStyle);
 
 function showToast(message, type = "Login bem sucedido!") {
-    let toast = document.querySelector(".toast=message");
+    let toast = document.querySelector(".toast-message");
 
     if (!toast) {
         toast = document.createElement("div");
