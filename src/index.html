@@ -1,11 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de cadastro</title>
+    <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
-    
+
+    <div class="box">
+        <form class="box-login">
+
+            <span class="IconLogo">
+                <img src="assets/IconCadastroLogo.png" alt="">
+            </span>
+
+            <h1>
+                Sistema de cadastro
+            </h1>
+            <p>LOGIN</p>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input id="email" type="text" placeholder="example@gmail.com">
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha:</label>
+                <input id="senha" type="password" placeholder="Senha de acesso" maxlength="8">
+            </div>
+
+            <div class="group-btn">
+                <button class="btn-entrar" type="submit">Entrar</button>
+                <button class="btn-registrar" type="button">Registrar</button>
+            </div>
+        </form>
+    </div>
+    <script src="index.js"></script>
 </body>
+
 </html>
