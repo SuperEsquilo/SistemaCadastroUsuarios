@@ -73,7 +73,7 @@ form.addEventListener("submit", async (event) => {
     const formatoEmailValidado = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     if (formatoEmailValidado) {
-        showToast("Formato de e-mail inválido.","error");
+        showToast("Formato de e-mail inválido.", "error");
         emailInput.focus();
         return;
     }
@@ -108,4 +108,8 @@ form.addEventListener("submit", async (event) => {
     } finally {
         botaoEnviar.disabled = false;
     }
+});
+
+document.querySelector(".btn-registrar").addEventListener("click", () => {
+    window.location.href = "registrar.html";
 });
