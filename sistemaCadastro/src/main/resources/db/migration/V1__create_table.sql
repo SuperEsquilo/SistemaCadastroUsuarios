@@ -15,11 +15,27 @@ CREATE
 OR REPLACE FUNCITON usuario_atualizado()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.atualizado_em
-= NOW();
-RETURN NEW;
+    NEW.atualizado_em = NOW();
+    RETURN NEW;
 END;
-$$
-LANGUAGE PLPGSQL;
+$$ LANGUAGE PLPGSQL;
 
-CREATE TABLE
+CREATE TABLE endereco
+(
+    id            BIGSERIAL PRIMARY KEY,
+    rua           VARCHAR(120) NOT NULL,
+    numero        VARCHAR(10)  NOT NULL,
+    complemento   VARCHAR(60),
+    bairro        VARCHAR(120) NOT NULL,
+    cidade        VARCHAR(100) NOT NULL,
+    uf            CHAR(2)      NOT NULL,
+    cep           CHAR(8)      NOT NULL,
+    criado_em     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT ck_endereco_cep CHECK (cep ~ '^[0-9]{8}$'
+) ,
+    CONSTRAINT ck_endereco_uf  CHECK (uf = UPPER(uf))
+);
+
+CREATE INDEX idx_endereco_cep ON endereco (cep);
