@@ -5,20 +5,33 @@ const senhaInput = document.querySelector("#senha");
 const toastStyle = document.createElement("style");
 toastStyle.textContent = `
     .toast-message {
-        position: fixed;
-        right: 24px;
-        bottom: 24px;
-        z-index: 9999;
-        max-width: min(360px, calc(100vw - 48px));
-        padding: 14px 18px;
-        border-radius: 8px;
-        color: #fff;
-        background: #212121;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        font-family: "Commissioner", sans-serif;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: opacity 0.2s ease, transform 0.2s ease;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9999;
+    max-width: min(360px, calc(100vw - 48px));
+    padding: 14px 18px 14px 22px;
+    border-radius: 8px;
+    overflow: hidden;
+    color: #fff;
+    background: #212121;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    font-family: "Commissioner", sans-serif;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    --toast-accent: #9e9e9e;
+    }
+
+    .toast-message::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 10px;
+        background: var(--toast-accent);
     }
 
     .toast-message.is-visible {
@@ -27,11 +40,11 @@ toastStyle.textContent = `
     }
 
     .toast-message.is-error {
-        background: #b3261e;
+        --toast-accent: #b3261e;
     }
 
     .toast-message.is-success {
-        background: #287a46;
+        --toast-accent: #287a46;
     }
 `;
 
@@ -72,20 +85,20 @@ form.addEventListener("submit", async (event) => {
     // Validação do formato do e-mail
     const formatoEmailValidado = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    if (formatoEmailValidado) {
+    if (!formatoEmailValidado) {
         showToast("Formato de e-mail inválido.", "error");
         emailInput.focus();
         return;
     }
 
-    const botaoEnviar = form.querySelector(".btn-enviar");
+    const botaoEnviar = form.querySelector(".btn-entrar");
     botaoEnviar.disabled = true;
 
     try {
         const resposta = await fetch("http://localhost:8080/api/auth/login", {
             method: "POST",
             headers: {
-                "Content-type": "application/json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ email, senha })
         });
@@ -96,12 +109,12 @@ form.addEventListener("submit", async (event) => {
             if (resposta.status === 401) {
                 showToast("E-mail ou senha inválidos", "error");
             } else {
-                showToast(dados.message || "Falha ao realizar login.", "error");
+                showToast(dados.mensagem || "Falha ao realizar login.", "error");
             }
             return;
         }
 
-        showToast(dados.message || "Login bem sucedido", "success");
+        showToast(dados.mensagem || "Login bem sucedido", "success");
     } catch (erro) {
         console.error("Erro ao conectar com o backend:", erro);
         showToast("Falha ao conectar com o servidor", "error");
