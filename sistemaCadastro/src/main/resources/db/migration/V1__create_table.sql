@@ -1,14 +1,14 @@
 CREATE TABLE usuarios
 (
-    id               BIGSERIAL PRIMARY KEY,
-    nome_usuario     VARCHAR(120)        NOT NULL,
-    email_usuario    VARCHAR(120) UNIQUE NOT NULL,
-    telefone_usuario VARCHAR(20)         NOT NULL,
-    cpf_usuario      VARCHAR(11) UNIQUE  NOT NULL,
-    rg_usuario       VARCHAR(11) UNIQUE  NOT NULL,
-    ativo            BOOLEAN                      DEFAULT TRUE,
-    criado_em        TIMESTAMP           NOT NULL DEFAULT NOW(),
-    atualizado_em    TIMESTAMP           NOT NULL DEFAULT NOW()
+    id            BIGSERIAL PRIMARY KEY,
+    nome          VARCHAR(120)        NOT NULL,
+    email         VARCHAR(120) UNIQUE NOT NULL,
+    telefone      VARCHAR(20)         NOT NULL,
+    cpf           VARCHAR(11) UNIQUE  NOT NULL,
+    rg            VARCHAR(11) UNIQUE  NOT NULL,
+    ativo         BOOLEAN                      DEFAULT TRUE,
+    criado_em     TIMESTAMP           NOT NULL DEFAULT NOW(),
+    atualizado_em TIMESTAMP           NOT NULL DEFAULT NOW()
 );
 
 CREATE
