@@ -6,6 +6,8 @@ CREATE TABLE usuarios
     telefone      VARCHAR(20)         NOT NULL,
     cpf           VARCHAR(11) UNIQUE  NOT NULL,
     rg            VARCHAR(11) UNIQUE  NOT NULL,
+    status        VARCHAR(50)         NOT NULL DEFAULT 'ATIVO'
+        CHECK (status IN ('ATIVO', 'DESATIVADO', 'BLOQUEADO', 'VERIFICACAO_PENDENTE')),
     ativo         BOOLEAN                      DEFAULT TRUE,
     criado_em     TIMESTAMP           NOT NULL DEFAULT NOW(),
     atualizado_em TIMESTAMP           NOT NULL DEFAULT NOW()
@@ -15,10 +17,12 @@ CREATE
 OR REPLACE FUNCITON usuario_atualizado()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.atualizado_em = NOW();
-    RETURN NEW;
+    NEW.atualizado_em
+= NOW();
+RETURN NEW;
 END;
-$$ LANGUAGE PLPGSQL;
+$$
+LANGUAGE PLPGSQL;
 
 CREATE TABLE endereco
 (
@@ -35,7 +39,6 @@ CREATE TABLE endereco
 
     CONSTRAINT ck_endereco_cep CHECK (cep ~ '^[0-9]{8}$'
 ) ,
-    CONSTRAINT ck_endereco_uf  CHECK (uf = UPPER(uf))
-);
+    CONSTRAINT ck_endereco_uf  CHECK (uf = UPPER(uf)));
 
 CREATE INDEX idx_endereco_cep ON endereco (cep);
