@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -10,36 +10,89 @@
 </head>
 
 <body>
-
     <div class="box">
-        <form class="box-login">
 
+        <!-- Tela de login -->
+        <form class="box-login" id="form-login" aria-hidden="false">
             <span class="IconLogo">
-                <img src="assets/IconCadastroLogo.png" alt="">
+                <img src="assets/IconCadastroLogo.png" alt="Logo do sistema">
             </span>
 
-            <h1>
-                Sistema de cadastro
-            </h1>
+            <h1>Sistema de cadastro</h1>
             <p>LOGIN</p>
 
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input id="email" type="text" placeholder="example@gmail.com">
+                <label for="email-login">Email:</label>
+                <input id="email-login" name="email" type="email" placeholder="example@gmail.com" autocomplete="email">
             </div>
 
             <div class="form-group">
-                <label for="senha">Senha:</label>
-                <input id="senha" type="password" placeholder="Senha de acesso" maxlength="8">
+                <label for="senha-login">Senha:</label>
+                <input id="senha-login" name="senha" type="password" placeholder="Senha de acesso" maxlength="8"
+                    autocomplete="current-password">
             </div>
 
             <div class="group-btn">
-                <button class="btn-entrar" type="submit">Entrar</button>
-                <button class="btn-registrar" type="button">Registrar</button>
+                <button class="btn-entrar" type="button">Entrar</button>
+                <button class="btn-registrar" id="mostrar-cadastro" type="button">
+                    Registrar
+                </button>
             </div>
         </form>
+
+        <!-- Tela de cadastro, oculta inicialmente -->
+        <form class="box-login" id="form-cadastro" aria-hidden="true" hidden>
+            <span class="IconLogo">
+                <img src="assets/IconCadastroLogo.png" alt="Logo do sistema">
+            </span>
+
+            <h1>Sistema de cadastro</h1>
+            <p>REGISTRAR</p>
+
+            <div class="form-group">
+                <label for="nome-cadastro">Nome:</label>
+                <input id="nome-cadastro" name="nome" type="text" placeholder="Seu nome" autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="email-cadastro">Email:</label>
+                <input id="email-cadastro" name="email" type="email" placeholder="example@gmail.com"
+                    autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="senha-cadastro">Senha:</label>
+                <input id="senha-cadastro" name="senha" type="password" placeholder="Crie uma senha" maxlength="8"
+                    autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label for="confirmar-senha">Confirmar senha:</label>
+                <input id="confirmar-senha" name="confirmar-senha" type="password"
+                    placeholder="Digite a senha novamente" maxlength="8" autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label for="tag-usuario">Tipo de usuário:</label>
+                <select id="tag-usuario" name="tag-usuario" required>
+                    <option value="" disabled selected>Selecione a tag do usuário</option>
+                    <option value="admin">Administrador</option>
+                    <option value="usuario">Usuário</option>
+                    <option value="visitante">Visitante</option>
+                </select>
+            </div>
+
+            <div class="group-btn">
+                <button class="btn-entrar" type="button">Criar conta</button>
+                <button class="btn-registrar" id="voltar-login" type="button">
+                    Voltar ao login
+                </button>
+            </div>
+        </form>
+
     </div>
-    <script src="index.js"></script>
+
+    <script src="index.js" defer></script>
 </body>
 
 </html>
