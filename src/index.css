@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    min-height: 100svh;
+    margin: 0;
+    padding: clamp(16px, 4vw, 32px);
+    font-family: "Commissioner", sans-serif;
+}
+
+:root {
+    --shadow-box-principal: 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.06),
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.10);
+
+    --shadow-input: inset 3px 2px 7px rgba(0, 0, 0, 0.2);
+
+    --color-text-p: #2121212a;
+    --color-text-input: #212121;
+
+    /* Background gradiente */
+    --background-primary-color: #115E59;
+    --background-secundary-color:#1F2937 ;
+}
+
+body {
+    background: linear-gradient(to top, var(--background-primary-color), var(--background-secundary-color));
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+.box {
+    width: min(100%, 440px);
+    margin: auto;
+    padding: clamp(22px, 6vw, 50px);
+    box-shadow: var(--shadow-box-principal);
+    border-radius: 10px;
+}
+
+.box-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.box-login.is-leaving {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
+.box-login.is-entering {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+.box-login .IconLogo img {
+    width: 70px;
+    height: 70px;
+    animation: flutuar 3s ease-in-out infinite;
+}
+
+@keyframes flutuar {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.box-login h1 {
+    max-width: 100%;
+    margin-bottom: -5px;
+    font-family: "Commissioner", sans-serif;
+    font-weight: 500;
+    font-size: clamp(1.35rem, 5vw, 2rem);
+    text-align: center;
+}
+
+.box-login p {
+    font-family: "Commissioner", sans-serif;
+    color: var(--color-text-p);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    align-self: flex-start;
+    margin-bottom: 6px;
+    font-family: "Commissioner", sans-serif;
+    font-size: 0.8rem;
+    color: var(--color-text-input);
+}
+
+.box-login .form-group input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: var(--shadow-input);
+    outline: none;
+    font-family: "Commissioner", sans-serif;
+    width: 100%;
+}
+
+.box-login .form-group input::placeholder {
+    color: #757575;
+    opacity: 1;
+}
+
+.box-login .form-group input[type="password"] {
+    margin-bottom: 10px;
+}
+
+.box-login .form-group select {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: var(--shadow-input);
+    outline: none;
+    font-family: "Commissioner", sans-serif;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #fff;
+    color: var(--color-text-input);
+    cursor: pointer;
+}
+
+.box-login .form-group select:invalid {
+    color: #757575;
+}
+
+.box-login .form-group select option {
+    background-color: #fff;
+    color: #212121;
+    font-family: "Commissioner", sans-serif;
+}
+
+/* Opção selecionada — o suporte visual varia entre navegadores */
+.box-login .form-group select option:checked {
+    background-color: #212121;
+    color: #fff;
+}
+
+.group-btn {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 12px;
+    padding: 10px;
+}
+
+.group-btn button {
+    flex: 1 1 120px;
+    min-width: 0;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-family: "Commissioner", sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+
+.btn-entrar {
+    background-color: #212121;
+    color: #fff;
+}
+
+.btn-entrar:hover {
+    background-color: #424242;
+    transform: translateY(-2px);
+}
+
+.btn-registrar {
+    background-color: #e8e8e8;
+    color: #212121;
+}
+
+.btn-registrar:hover {
+    background-color: #d2d2d2;
+    transform: translateY(-2px);
+}
+
+#fundo-animado {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.box {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+}
+
+@media (max-width: 360px) {
+    body {
+        padding: 12px;
+    }
+
+    .box {
+        padding: 20px 16px;
+    }
+
+    .group-btn {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .group-btn button {
+        flex-basis: auto;
+        width: 100%;
+    }
+}
+
+@media (max-height: 560px) {
+    body {
+        align-items: flex-start;
+    }
+
+    .box {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .box-login .IconLogo img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .box-login p {
+        margin-bottom: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
