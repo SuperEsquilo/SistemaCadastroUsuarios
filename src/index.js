@@ -10,6 +10,11 @@ const tagUsuario = document.getElementById("tag-usuario");
 const botaoCriarConta = formCadastro.querySelector(".btn-entrar");
 const botaoMostrarCadastro = document.getElementById("mostrar-cadastro");
 const botaoVoltarLogin = document.getElementById("voltar-login");
+const canvas = document.getElementById("fundo-animado");
+const contexto = canvas.getContext("2d");
+const movimentoReduzido = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
 
 const toastStyle = document.createElement("style");
 toastStyle.textContent = `
@@ -192,7 +197,7 @@ function validarLogin(event) {
         return;
     }
 
-    showToast("Login ainda não conectado ao backend.", "info");
+    showToast("Falha ao logar, conexão com back-end falhou.", "info");
 }
 
 formLogin.addEventListener("submit", validarLogin);
@@ -258,3 +263,77 @@ botaoMostrarCadastro.addEventListener("click", () => {
 botaoVoltarLogin.addEventListener("click", () => {
     trocarTela(formCadastro, formLogin);
 });
+
+let largura;
+let altura;
+let pontos = [];
+
+function ajustarCanvas() {
+    const escala = window.devicePixelRatio || 1;
+
+    largura = window.innerWidth;
+    altura = window.innerHeight;
+
+    canvas.width = largura * escala;
+    canvas.height = altura * escala;
+    contexto.setTransform(escala, 0, 0, escala, 0, 0);
+
+    const quantidade = Math.min(100, Math.floor((largura * altura) / 12000));
+
+    pontos = Array.from({ length: quantidade }, () => ({
+        x: Math.random() * largura,
+        y: Math.random() * altura,
+        raio: Math.random() * 2 + 1,
+        velocidadeX: (Math.random() - 0.5) * 0.4,
+        velocidadeY: (Math.random() - 0.5) * 0.4
+    }));
+
+    desenhar();
+}
+
+function desenhar() {
+    contexto.clearRect(0, 0, largura, altura);
+
+    const distanciaMaxima = 120;
+
+    // Desenha linhas entre pontos próximos
+    for (let i = 0; i < pontos.length; i++) {
+        for (let j = i + 1; j < pontos.length; j++) {
+            const dx = pontos[i].x - pontos[j].x;
+            const dy = pontos[i].y - pontos[j].y;
+            const distancia = Math.hypot(dx, dy);
+
+            if (distancia < distanciaMaxima) {
+                contexto.beginPath();
+                contexto.moveTo(pontos[i].x, pontos[i].y);
+                contexto.lineTo(pontos[j].x, pontos[j].y);
+                contexto.strokeStyle = "rgba(199, 199, 199, 0.19)";
+                contexto.globalAlpha = 1 - distancia / distanciaMaxima;
+                contexto.lineWidth = 1;
+                contexto.stroke();
+            }
+        }
+    }
+
+    contexto.globalAlpha = 1;
+    contexto.fillStyle = "rgba(255, 255, 255, 0.88)";
+
+    for (const ponto of pontos) {
+        contexto.beginPath();
+        contexto.arc(ponto.x, ponto.y, ponto.raio, 0, Math.PI * 2);
+        contexto.fill();
+
+        ponto.x += ponto.velocidadeX;
+        ponto.y += ponto.velocidadeY;
+
+        if (ponto.x < 0 || ponto.x > largura) ponto.velocidadeX *= -1;
+        if (ponto.y < 0 || ponto.y > altura) ponto.velocidadeY *= -1;
+    }
+
+    if (!movimentoReduzido) {
+        requestAnimationFrame(desenhar);
+    }
+}
+
+window.addEventListener("resize", ajustarCanvas);
+ajustarCanvas();
