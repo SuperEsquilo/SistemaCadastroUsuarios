@@ -1,6 +1,6 @@
 CREATE TABLE usuarios
 (
-    id            BIGSERIAL PRIMARY KEY,
+    id            SERIAL PRIMARY KEY,
     nome          VARCHAR(120)        NOT NULL,
     email         VARCHAR(120) UNIQUE NOT NULL,
     telefone      VARCHAR(20)         NOT NULL,
@@ -26,7 +26,7 @@ LANGUAGE PLPGSQL;
 
 CREATE TABLE endereco
 (
-    id            BIGSERIAL PRIMARY KEY,
+    id            SERIAL PRIMARY KEY,
     rua           VARCHAR(120) NOT NULL,
     numero        VARCHAR(10)  NOT NULL,
     complemento   VARCHAR(60),
