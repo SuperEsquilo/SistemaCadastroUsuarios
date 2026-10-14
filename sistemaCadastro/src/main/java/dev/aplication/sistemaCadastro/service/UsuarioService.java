@@ -27,4 +27,11 @@ public class UsuarioService {
         return usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("ID do usuario nao encontrado" + id));
     }
+
+    @Transactional
+    public Usuario salvar(Usuario usuario) {
+        Usuario usuarioSalvo = new Usuario();
+        
+        return null;
+    }
 }
