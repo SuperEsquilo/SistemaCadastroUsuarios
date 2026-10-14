@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sistemaCadastro.iml" filepath="$PROJECT_DIR$/.idea/sistemaCadastro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SistemaCadastroUsuarios.iml" filepath="$PROJECT_DIR$/.idea/SistemaCadastroUsuarios.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sistemaCadastro/sistemaCadastro.iml" filepath="$PROJECT_DIR$/sistemaCadastro/sistemaCadastro.iml" />
     </modules>
   </component>
 </project>
