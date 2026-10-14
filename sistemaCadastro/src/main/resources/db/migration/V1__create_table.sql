@@ -6,6 +6,8 @@ CREATE TABLE usuarios
     telefone      VARCHAR(20)         NOT NULL,
     cpf           VARCHAR(11) UNIQUE  NOT NULL,
     rg            VARCHAR(11) UNIQUE  NOT NULL,
+    tipo_usuario  VARHCAR(25)         NOT NULL DEFAULT 'USUARIO'
+        CHECK (tipo_usuario IN ('USUARIO', 'ADMINISTRADOR')),
     status        VARCHAR(50)         NOT NULL DEFAULT 'ATIVO'
         CHECK (status IN ('ATIVO', 'DESATIVADO', 'BLOQUEADO', 'VERIFICACAO_PENDENTE')),
     ativo         BOOLEAN                      DEFAULT TRUE,

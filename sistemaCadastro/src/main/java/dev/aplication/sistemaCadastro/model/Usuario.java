@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "usuarios")
@@ -36,11 +35,15 @@ public class Usuario {
     private String rg;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 25)
+    @Column(name = "tipo_usuario", nullable = false, length = 25)
+    private TipoUsuario tipoUsuario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 50)
     private StatusUsuario status;
 
     @CreationTimestamp
-    @Column(name = "criado_em", nullable = false)
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
     @UpdateTimestamp
@@ -93,6 +96,14 @@ public class Usuario {
 
     public void setRg(String rg) {
         this.rg = rg;
+    }
+
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
     }
 
     public StatusUsuario getStatus() {

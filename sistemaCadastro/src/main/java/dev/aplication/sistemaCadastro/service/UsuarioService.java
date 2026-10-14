@@ -1,8 +1,11 @@
 package dev.aplication.sistemaCadastro.service;
 
 import java.util.List;
-import java.util.Locale;
 
+import dev.aplication.sistemaCadastro.dto.UsuarioRequestDTO;
+import dev.aplication.sistemaCadastro.dto.UsuarioResponseDTO;
+import dev.aplication.sistemaCadastro.model.StatusUsuario;
+import dev.aplication.sistemaCadastro.model.TipoUsuario;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -20,67 +23,100 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll();
+    public List<UsuarioResponseDTO> listarTodos() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioResponseDTO::fromEntity)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public Usuario buscarPorId(Integer id) {
-        return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ID do usuario nao encontrado" + id));
+    public UsuarioResponseDTO buscarPorId(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
+        return UsuarioResponseDTO.fromEntity(usuario);
     }
 
     @Transactional
-    public Usuario salvar(Usuario usuario) {
-        String cpf = somenteDigitos(usuario.getCpf());
-        String email = usuario.getEmail().trim().toLowerCase();
+    public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
+        String cpf   = somenteDigitos(dto.cpf());
+        String email = dto.email().trim().toLowerCase();
 
         if (usuarioRepository.existsByCpf(cpf)) {
-            throw new IllegalArgumentException("Usuário com esse CPF ja existe");
+            throw new IllegalArgumentException("Usuário com esse CPF já existe.");
         }
-
         if (usuarioRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Usuário com esse Email ja cadastrado");
+            throw new IllegalArgumentException("Usuário com esse e-mail já cadastrado.");
         }
 
-        Usuario usuarioSalvo = new Usuario();
-        usuario.setNome(usuario.getNome().trim());
+        Usuario usuario = new Usuario();
+        usuario.setNome(dto.nome().trim());
         usuario.setEmail(email);
-        usuario.setTelefone(somenteDigitos(usuario.getTelefone()));
+        usuario.setTelefone(somenteDigitos(dto.telefone()));
         usuario.setCpf(cpf);
-        usuario.setRg(somenteDigitos(usuario.getRg()));
+        usuario.setRg(somenteDigitos(dto.rg()));
+        usuario.setTipoUsuario(dto.tipoUsuario() != null ? dto.tipoUsuario() : TipoUsuario.USUARIO);
+        usuario.setStatus(StatusUsuario.VERIFICACAO_PENDENTE);
 
-        return usuarioRepository.save(usuario);
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuario));
     }
 
     @Transactional
-    public Usuario atualizar(Integer id, Usuario usuario) {
+    public UsuarioResponseDTO atualizar(Integer id, UsuarioRequestDTO dto) {
         Usuario usuarioAtualizado = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
-        String cpf = somenteDigitos(usuario.getCpf());
-        String email = usuario.getEmail().trim().toLowerCase();
+
+        String cpf   = somenteDigitos(dto.cpf());
+        String email = dto.email().trim().toLowerCase();
 
         if (usuarioRepository.existsByCpfAndIdNot(cpf, id)) {
-            throw new IllegalArgumentException("CPF de usuário ja cadastrado");
+            throw new IllegalArgumentException("CPF já cadastrado para outro usuário.");
         }
 
-        if (usuarioRepository.existsByCpfAndIdNot(email, id)) {
-            throw new IllegalArgumentException("E-mail de usuário ja cadastrado");
+        if (usuarioRepository.existsByEmailAndIdNot(email, id)) {
+            throw new IllegalArgumentException("E-mail já cadastrado para outro usuário.");
         }
 
-        usuario.setNome(usuario.getNome().trim());
-        usuario.setEmail(email);
-        usuario.setTelefone(somenteDigitos(usuario.getTelefone()));
-        usuario.setCpf(cpf);
-        usuario.setRg(somenteDigitos(usuario.getRg()));
+        // CORRIGIDO: atualiza os campos no objeto persistido
+        usuarioAtualizado.setNome(dto.nome().trim());
+        usuarioAtualizado.setEmail(email);
+        usuarioAtualizado.setTelefone(somenteDigitos(dto.telefone()));
+        usuarioAtualizado.setCpf(cpf);
+        usuarioAtualizado.setRg(somenteDigitos(dto.rg()));
 
-        return usuario;
+        if (dto.tipoUsuario() != null) {
+            usuarioAtualizado.setTipoUsuario(dto.tipoUsuario());
+        }
+
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuarioAtualizado));
+    }
+
+    @Transactional
+    public UsuarioResponseDTO ativar(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
+        if (usuario.getStatus() == StatusUsuario.ATIVO) {
+            throw new IllegalStateException("Este usuário já está ativo no sistema.");
+        }
+        usuario.setStatus(StatusUsuario.ATIVO);
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuario));
+    }
+
+    @Transactional
+    public UsuarioResponseDTO desativar(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
+        if (usuario.getStatus() == StatusUsuario.DESATIVADO) {
+            throw new IllegalStateException("Este usuário já está desativado no sistema.");
+        }
+        usuario.setStatus(StatusUsuario.DESATIVADO);
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuario));
     }
 
     @Transactional
     public void deletar(Integer id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new EntityNotFoundException("Usuário não encontraddo: " + id);
+            throw new EntityNotFoundException("Usuário não encontrado: " + id);
         }
         usuarioRepository.deleteById(id);
     }

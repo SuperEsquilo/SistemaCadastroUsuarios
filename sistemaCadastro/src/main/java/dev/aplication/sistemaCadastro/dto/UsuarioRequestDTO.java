@@ -1,5 +1,6 @@
 package dev.aplication.sistemaCadastro.dto;
 
+import dev.aplication.sistemaCadastro.model.TipoUsuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,8 @@ public record UsuarioRequestDTO(
 
         @NotBlank(message = "RG do usuário é obrigatório")
         @Size(max = 11)
-        String rg
+        String rg,
+
+        TipoUsuario tipoUsuario
 ) {
 }

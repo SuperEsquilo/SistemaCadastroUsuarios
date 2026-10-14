@@ -307,7 +307,7 @@ function desenhar() {
                 contexto.beginPath();
                 contexto.moveTo(pontos[i].x, pontos[i].y);
                 contexto.lineTo(pontos[j].x, pontos[j].y);
-                contexto.strokeStyle = "rgba(188, 186, 186, 0.19)";
+                contexto.strokeStyle = "rgb(231 231 231 / 0.39)";
                 contexto.globalAlpha = 1 - distancia / distanciaMaxima;
                 contexto.lineWidth = 1;
                 contexto.stroke();
@@ -316,7 +316,7 @@ function desenhar() {
     }
 
     contexto.globalAlpha = 1;
-    contexto.fillStyle = "rgba(255, 255, 255, 0.88)";
+    contexto.fillStyle = "rgb(255 255 255 / 0.88)";
 
     for (const ponto of pontos) {
         contexto.beginPath();
