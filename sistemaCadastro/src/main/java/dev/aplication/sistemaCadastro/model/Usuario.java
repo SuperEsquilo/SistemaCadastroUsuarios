@@ -42,6 +42,9 @@ public class Usuario {
     @Column(name = "status", nullable = false, length = 50)
     private StatusUsuario status;
 
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo;
+
     @CreationTimestamp
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;

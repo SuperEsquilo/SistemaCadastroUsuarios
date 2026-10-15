@@ -1,6 +1,7 @@
 package dev.aplication.sistemaCadastro.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record EnderecoRequestDTO(
@@ -26,6 +27,11 @@ public record EnderecoRequestDTO(
 
     @NotBlank(message = "O UF(Estado) d usuário é obrigatório")
     @Size(max = 2)
-    String uf
+    @Pattern(regexp = "[A-Za-z]{2}", message = "UF deve conter apenas letras")
+    String uf,
+
+    @NotBlank(message = "CEP do endereco do usuário é obrigatório")
+    @Pattern(regexp = "\\d{8}", message = "CEP deve conter exatamente 8 dígitos numéricos")
+    String cep
 ) {
 }

@@ -1,3 +1,4 @@
+
 package dev.aplication.sistemaCadastro.model;
 
 import jakarta.persistence.*;

@@ -20,25 +20,21 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    // GET /usuarios
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
-    // GET /usuarios/{id}
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 
-    // POST /usuarios
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> salvar(@Valid @RequestBody UsuarioRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(dto));
     }
 
-    // PUT /usuarios/{id}
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizar(
             @PathVariable Integer id,
@@ -46,19 +42,16 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 
-    // PATCH /usuarios/{id}/ativar
     @PatchMapping("/{id}/ativar")
     public ResponseEntity<UsuarioResponseDTO> ativar(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.ativar(id));
     }
 
-    // PATCH /usuarios/{id}/desativar  ← CORRIGIDO: era @PatchExchange e /{id}/desativado
     @PatchMapping("/{id}/desativar")
     public ResponseEntity<UsuarioResponseDTO> desativar(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.desativar(id));
     }
 
-    // DELETE /usuarios/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         usuarioService.deletar(id);
