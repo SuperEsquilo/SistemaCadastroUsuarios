@@ -2,11 +2,14 @@ package dev.aplication.sistemaCadastro.service;
 
 import java.util.List;
 
+import dev.aplication.sistemaCadastro.dto.LoginRequestDTO;
+import dev.aplication.sistemaCadastro.dto.LoginResponseDTO;
 import dev.aplication.sistemaCadastro.dto.UsuarioRequestDTO;
 import dev.aplication.sistemaCadastro.dto.UsuarioResponseDTO;
 import dev.aplication.sistemaCadastro.model.StatusUsuario;
 import dev.aplication.sistemaCadastro.model.TipoUsuario;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.aplication.sistemaCadastro.model.Usuario;
@@ -17,9 +20,38 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponseDTO autenticar(LoginRequestDTO dto) {
+        String email = dto.email().trim().toLowerCase();
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha incorretos."));
+
+        if (usuario.getSenha() == null || !passwordEncoder.matches(dto.senha(), usuario.getSenha())) {
+            throw new IllegalArgumentException("E-mail ou senha incorretos.");
+        }
+
+        if (usuario.getStatus() == StatusUsuario.DESATIVADO) {
+            throw new IllegalStateException("Esta conta está desativada.");
+        }
+
+        if (usuario.getStatus() == StatusUsuario.BLOQUEADO) {
+            throw new IllegalStateException("Esta conta está bloqueada.");
+        }
+
+        return new LoginResponseDTO(
+                usuario.getId(),
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getTipoUsuario()
+        );
     }
 
     @Transactional(readOnly = true)
@@ -55,6 +87,7 @@ public class UsuarioService {
         usuario.setTelefone(somenteDigitos(dto.telefone()));
         usuario.setCpf(cpf);
         usuario.setRg(somenteDigitos(dto.rg()));
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setTipoUsuario(dto.tipoUsuario() != null ? dto.tipoUsuario() : TipoUsuario.USUARIO);
         usuario.setStatus(StatusUsuario.VERIFICACAO_PENDENTE);
 

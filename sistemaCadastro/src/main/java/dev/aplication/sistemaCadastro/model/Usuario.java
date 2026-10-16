@@ -34,6 +34,9 @@ public class Usuario {
     @Column(name = "rg", nullable = false, length = 11, unique = true)
     private String rg;
 
+    @Column(name = "senha", length = 255)
+    private String senha;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_usuario", nullable = false, length = 25)
     private TipoUsuario tipoUsuario;
@@ -99,6 +102,14 @@ public class Usuario {
 
     public void setRg(String rg) {
         this.rg = rg;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public TipoUsuario getTipoUsuario() {

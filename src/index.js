@@ -1,9 +1,13 @@
+const API_BASE_URL = "http://localhost:8080/login";
 const formLogin = document.getElementById("form-login");
 const emailInput = document.getElementById("email-login");
 const senhaInput = document.getElementById("senha-login");
 const formCadastro = document.getElementById("form-cadastro");
 const nomeCadastro = document.getElementById("nome-cadastro");
 const emailCadastro = document.getElementById("email-cadastro");
+const telefoneCadastro = document.getElementById("telefone-cadastro");
+const cpfCadastro = document.getElementById("cpf-cadastro");
+const rgCadastro = document.getElementById("rg-cadastro");
 const senhaCadastro = document.getElementById("senha-cadastro");
 const confirmarSenha = document.getElementById("confirmar-senha");
 const tagUsuario = document.getElementById("tag-usuario");
@@ -178,8 +182,12 @@ async function trocarTela(telaAtual, proximaTela) {
     }
 }
 
-function validarLogin(event) {
+let loginEmAndamento = false;
+
+async function validarLogin(event) {
     event.preventDefault();
+
+    if (loginEmAndamento) return;
 
     const email = emailInput.value.trim();
     const senha = senhaInput.value;
@@ -197,14 +205,148 @@ function validarLogin(event) {
         return;
     }
 
-    showToast("Falha ao logar, conexão com back-end falhou.", "info");
+    loginEmAndamento = true;
+    const botaoLogin = formLogin.querySelector(".btn-entrar");
+    if (botaoLogin) botaoLogin.disabled = true;
+
+    try {
+        const resposta = await fetch(new URL("usuarios/login", API_BASE_URL), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json"
+            },
+            body: JSON.stringify({ email, senha })
+        });
+
+        if (resposta.status === 404) {
+            showToast(
+                "O endpoint de login ainda não foi implementado no backend.",
+                "error"
+            );
+            return;
+        }
+
+        const corpo = await resposta.text();
+        let resultado = null;
+        if (corpo) {
+            try { resultado = JSON.parse(corpo); } catch { resultado = null; }
+        }
+
+        if (!resposta.ok) {
+            const mensagem =
+                resultado?.detail ||
+                resultado?.message ||
+                resultado?.error ||
+                (resposta.status === 401
+                    ? "E-mail ou senha incorretos."
+                    : `Erro HTTP ${resposta.status} ao tentar autenticar.`);
+            showToast(mensagem, "error");
+            return;
+        }
+
+        showToast("Login realizado com sucesso!", "success");
+    } catch (erro) {
+        const mensagem =
+            erro instanceof TypeError
+                ? "Não foi possível conectar ao backend. Verifique se ele está ativo e se permite requisições CORS desta página."
+                : erro.message;
+        showToast(mensagem, "error");
+    } finally {
+        loginEmAndamento = false;
+        if (botaoLogin) botaoLogin.disabled = false;
+    }
 }
 
 formLogin.addEventListener("submit", validarLogin);
 formLogin.querySelector(".btn-entrar").addEventListener("click", validarLogin);
 
-function validarCadastro(event) {
+// Máscaras amigáveis para campos de cadastro
+if (telefoneCadastro) {
+    telefoneCadastro.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+        if (v.length > 10) {
+            v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{2})(\d{4})(\d{0,4})$/, "($1) $2-$3");
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,5})$/, "($1) $2");
+        }
+        e.target.value = v;
+    });
+}
+
+if (cpfCadastro) {
+    cpfCadastro.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+        if (v.length > 9) {
+            v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})$/, "$1.$2.$3-$4");
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{3})(\d{3})(\d{0,3})$/, "$1.$2.$3");
+        } else if (v.length > 3) {
+            v = v.replace(/^(\d{3})(\d{0,3})$/, "$1.$2");
+        }
+        e.target.value = v;
+    });
+}
+
+if (rgCadastro) {
+    rgCadastro.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "").slice(0, 9);
+        if (v.length > 8) {
+            v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{1})$/, "$1.$2.$3-$4");
+        } else if (v.length > 5) {
+            v = v.replace(/^(\d{2})(\d{3})(\d{0,3})$/, "$1.$2.$3");
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,3})$/, "$1.$2");
+        }
+        e.target.value = v;
+    });
+}
+
+async function enviarCadastro(dados) {
+    const resposta = await fetch(new URL("/usuarios", API_BASE_URL), {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify(dados)
+    });
+
+    const corpo = await resposta.text();
+    let resultado = null;
+
+    if (corpo) {
+        try {
+            resultado = JSON.parse(corpo);
+        } catch {
+            resultado = null;
+        }
+    }
+
+    if (!resposta.ok) {
+        const mensagem =
+            resultado?.detail ||
+            resultado?.message ||
+            resultado?.error ||
+            (resposta.status === 400
+                ? "Os dados enviados foram rejeitados. Verifique o CPF, e-mail e demais campos."
+                : `O backend respondeu com erro HTTP ${resposta.status}.`);
+        throw new Error(mensagem);
+    }
+
+    return resultado;
+}
+
+let cadastroEmAndamento = false;
+
+async function validarCadastro(event) {
     event.preventDefault();
+
+    if (cadastroEmAndamento) {
+        return;
+    }
 
     if (!nomeCadastro.value.trim()) {
         showToast("Preencha seu nome.", "error");
@@ -224,6 +366,33 @@ function validarCadastro(event) {
     if (!formatoEmailValido) {
         showToast("Formato de e-mail inválido.", "error");
         emailCadastro.focus();
+        return;
+    }
+
+    const telefoneLimpo = telefoneCadastro ? telefoneCadastro.value.replace(/\D/g, "") : "";
+    if (!telefoneLimpo) {
+        showToast("Preencha seu telefone.", "error");
+        telefoneCadastro?.focus();
+        return;
+    }
+
+    const cpfLimpo = cpfCadastro ? cpfCadastro.value.replace(/\D/g, "") : "";
+    if (!cpfLimpo) {
+        showToast("Preencha seu CPF.", "error");
+        cpfCadastro?.focus();
+        return;
+    }
+
+    if (cpfLimpo.length !== 11) {
+        showToast("O CPF deve conter 11 dígitos.", "error");
+        cpfCadastro?.focus();
+        return;
+    }
+
+    const rgLimpo = rgCadastro ? rgCadastro.value.replace(/\D/g, "") : "";
+    if (!rgLimpo) {
+        showToast("Preencha seu RG.", "error");
+        rgCadastro?.focus();
         return;
     }
 
@@ -251,9 +420,52 @@ function validarCadastro(event) {
         return;
     }
 
-    showToast("Campos validados. O cadastro ainda não está conectado ao backend.", "info");
+    const tiposUsuario = {
+        usuario: "USUARIO",
+        admin: "ADMINISTRADOR"
+    };
+    const tipoUsuario = tiposUsuario[tagUsuario.value];
+
+    if (!tipoUsuario) {
+        showToast(
+            "O backend não oferece suporte ao tipo de usuário selecionado.",
+            "error"
+        );
+        tagUsuario.focus();
+        return;
+    }
+
+    const dados = {
+        nome: nomeCadastro.value.trim(),
+        email,
+        telefone: telefoneLimpo,
+        cpf: cpfLimpo,
+        rg: rgLimpo,
+        senha: senhaCadastro.value,
+        tipoUsuario
+    };
+
+    cadastroEmAndamento = true;
+    botaoCriarConta.disabled = true;
+
+    try {
+        await enviarCadastro(dados);
+        showToast("Cadastro criado com sucesso! Agora você pode fazer login.", "success");
+        formCadastro.reset();
+        trocarTela(formCadastro, formLogin);
+    } catch (erro) {
+        const mensagem =
+            erro instanceof TypeError
+                ? "Não foi possível conectar ao backend. Verifique se ele está ativo e se permite requisições CORS desta página."
+                : erro.message;
+        showToast(mensagem, "error");
+    } finally {
+        cadastroEmAndamento = false;
+        botaoCriarConta.disabled = false;
+    }
 }
 
+formCadastro.addEventListener("submit", validarCadastro);
 botaoCriarConta.addEventListener("click", validarCadastro);
 
 botaoMostrarCadastro.addEventListener("click", () => {
