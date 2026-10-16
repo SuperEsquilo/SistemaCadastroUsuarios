@@ -7,10 +7,12 @@ import dev.aplication.sistemaCadastro.model.Endereco;
 import dev.aplication.sistemaCadastro.repository.EnderecoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;

@@ -39,4 +39,10 @@ public class EnderecoController {
     public ResponseEntity<EnderecoResponseDTO> atualizar(@PathVariable Integer id, @Valid @RequestBody EnderecoRequestDTO dto) {
         return ResponseEntity.ok(enderecoService.atualizar(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
+        enderecoService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

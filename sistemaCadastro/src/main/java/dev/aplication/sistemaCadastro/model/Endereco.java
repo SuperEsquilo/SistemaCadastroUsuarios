@@ -5,8 +5,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Types;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,9 +37,11 @@ public class Endereco {
     @Column(name = "cidade", nullable = false, length = 100)
     private String cidade;
 
+    @JdbcTypeCode(Types.CHAR)
     @Column(name = "uf", nullable = false, length = 2)
     private String uf;
 
+    @JdbcTypeCode(Types.CHAR)
     @Column(name = "cep", nullable = false, length = 8)
     private String cep;
 
