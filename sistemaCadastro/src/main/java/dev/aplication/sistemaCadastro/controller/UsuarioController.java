@@ -1,7 +1,5 @@
 package dev.aplication.sistemaCadastro.controller;
 
-import dev.aplication.sistemaCadastro.dto.LoginRequestDTO;
-import dev.aplication.sistemaCadastro.dto.LoginResponseDTO;
 import dev.aplication.sistemaCadastro.dto.UsuarioRequestDTO;
 import dev.aplication.sistemaCadastro.dto.UsuarioResponseDTO;
 import dev.aplication.sistemaCadastro.service.UsuarioService;
@@ -20,12 +18,6 @@ public class UsuarioController {
 
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO dto) {
-        LoginResponseDTO resposta = usuarioService.autenticar(dto);
-        return ResponseEntity.ok(resposta);
     }
 
     @GetMapping

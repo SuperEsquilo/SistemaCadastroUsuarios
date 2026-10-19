@@ -2,56 +2,28 @@ package dev.aplication.sistemaCadastro.service;
 
 import java.util.List;
 
-import dev.aplication.sistemaCadastro.dto.LoginRequestDTO;
-import dev.aplication.sistemaCadastro.dto.LoginResponseDTO;
 import dev.aplication.sistemaCadastro.dto.UsuarioRequestDTO;
 import dev.aplication.sistemaCadastro.dto.UsuarioResponseDTO;
+import dev.aplication.sistemaCadastro.model.RegistrarUsuario;
 import dev.aplication.sistemaCadastro.model.StatusUsuario;
 import dev.aplication.sistemaCadastro.model.TipoUsuario;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import dev.aplication.sistemaCadastro.model.Usuario;
+import dev.aplication.sistemaCadastro.repository.RegistrarUsuarioRepository;
 import dev.aplication.sistemaCadastro.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final RegistrarUsuarioRepository registrarUsuarioRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          RegistrarUsuarioRepository registrarUsuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Transactional(readOnly = true)
-    public LoginResponseDTO autenticar(LoginRequestDTO dto) {
-        String email = dto.email().trim().toLowerCase();
-
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha incorretos."));
-
-        if (usuario.getSenha() == null || !passwordEncoder.matches(dto.senha(), usuario.getSenha())) {
-            throw new IllegalArgumentException("E-mail ou senha incorretos.");
-        }
-
-        if (usuario.getStatus() == StatusUsuario.DESATIVADO) {
-            throw new IllegalStateException("Esta conta está desativada.");
-        }
-
-        if (usuario.getStatus() == StatusUsuario.BLOQUEADO) {
-            throw new IllegalStateException("Esta conta está bloqueada.");
-        }
-
-        return new LoginResponseDTO(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                usuario.getTipoUsuario()
-        );
+        this.registrarUsuarioRepository = registrarUsuarioRepository;
     }
 
     @Transactional(readOnly = true)
@@ -64,20 +36,19 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public UsuarioResponseDTO buscarPorId(Integer id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
+        Usuario usuario = buscarEntidade(id);
         return UsuarioResponseDTO.fromEntity(usuario);
     }
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
-        String cpf   = somenteDigitos(dto.cpf());
+        String cpf = somenteDigitos(dto.cpf());
         String email = dto.email().trim().toLowerCase();
 
         if (usuarioRepository.existsByCpf(cpf)) {
             throw new IllegalArgumentException("Usuário com esse CPF já existe.");
         }
-        if (usuarioRepository.existsByEmail(email)) {
+        if (usuarioRepository.existsByEmail(email) || registrarUsuarioRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Usuário com esse e-mail já cadastrado.");
         }
 
@@ -87,7 +58,6 @@ public class UsuarioService {
         usuario.setTelefone(somenteDigitos(dto.telefone()));
         usuario.setCpf(cpf);
         usuario.setRg(somenteDigitos(dto.rg()));
-        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setTipoUsuario(dto.tipoUsuario() != null ? dto.tipoUsuario() : TipoUsuario.USUARIO);
         usuario.setStatus(StatusUsuario.VERIFICACAO_PENDENTE);
 
@@ -96,53 +66,62 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO atualizar(Integer id, UsuarioRequestDTO dto) {
-        Usuario usuarioAtualizado = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
+        Usuario usuario = buscarEntidade(id);
 
-        String cpf   = somenteDigitos(dto.cpf());
+        String cpf = somenteDigitos(dto.cpf());
         String email = dto.email().trim().toLowerCase();
 
         if (usuarioRepository.existsByCpfAndIdNot(cpf, id)) {
             throw new IllegalArgumentException("CPF já cadastrado para outro usuário.");
         }
-
-        if (usuarioRepository.existsByEmailAndIdNot(email, id)) {
+        if (usuarioRepository.existsByEmailAndIdNot(email, id)
+                || registrarUsuarioRepository.existsByEmailAndIdNot(email, id)) {
             throw new IllegalArgumentException("E-mail já cadastrado para outro usuário.");
         }
 
-        // CORRIGIDO: atualiza os campos no objeto persistido
-        usuarioAtualizado.setNome(dto.nome().trim());
-        usuarioAtualizado.setEmail(email);
-        usuarioAtualizado.setTelefone(somenteDigitos(dto.telefone()));
-        usuarioAtualizado.setCpf(cpf);
-        usuarioAtualizado.setRg(somenteDigitos(dto.rg()));
+        usuario.setNome(dto.nome().trim());
+        usuario.setEmail(email);
+        usuario.setTelefone(somenteDigitos(dto.telefone()));
+        usuario.setCpf(cpf);
+        usuario.setRg(somenteDigitos(dto.rg()));
 
         if (dto.tipoUsuario() != null) {
-            usuarioAtualizado.setTipoUsuario(dto.tipoUsuario());
+            usuario.setTipoUsuario(dto.tipoUsuario());
         }
 
-        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuarioAtualizado));
+        RegistrarUsuario registro = buscarRegistro(id);
+        registro.setEmail(email);
+
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuario));
     }
 
     @Transactional
     public UsuarioResponseDTO ativar(Integer id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
-        if (usuario.getStatus() == StatusUsuario.ATIVO) {
+        Usuario usuario = buscarEntidade(id);
+        RegistrarUsuario registro = buscarRegistro(id);
+
+        if (usuario.getStatus() == StatusUsuario.ATIVO && Boolean.TRUE.equals(registro.getAtivo())) {
             throw new IllegalStateException("Este usuário já está ativo no sistema.");
         }
+
         usuario.setStatus(StatusUsuario.ATIVO);
+        registro.setAtivo(true);
+
         return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuario));
     }
 
     @Transactional
     public UsuarioResponseDTO desativar(Integer id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
-        if (usuario.getStatus() == StatusUsuario.DESATIVADO) {
+        Usuario usuario = buscarEntidade(id);
+        RegistrarUsuario registro = buscarRegistro(id);
+
+        if (usuario.getStatus() == StatusUsuario.DESATIVADO && !Boolean.TRUE.equals(registro.getAtivo())) {
             throw new IllegalStateException("Este usuário já está desativado no sistema.");
         }
+
         usuario.setStatus(StatusUsuario.DESATIVADO);
+        registro.setAtivo(false);
+
         return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuario));
     }
 
@@ -152,6 +131,17 @@ public class UsuarioService {
             throw new EntityNotFoundException("Usuário não encontrado: " + id);
         }
         usuarioRepository.deleteById(id);
+    }
+
+    private Usuario buscarEntidade(Integer id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: " + id));
+    }
+
+    private RegistrarUsuario buscarRegistro(Integer usuarioId) {
+        return registrarUsuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Credenciais não encontradas para o usuário: " + usuarioId));
     }
 
     private String somenteDigitos(String valor) {
