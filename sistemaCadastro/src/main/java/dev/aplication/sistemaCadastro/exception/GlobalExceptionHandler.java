@@ -3,6 +3,7 @@ package dev.aplication.sistemaCadastro.exception;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +28,15 @@ public class GlobalExceptionHandler {
         Map<String, String> erro = new HashMap<>();
         erro.put("error", "Operação não permitida");
         erro.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Map<String, String>> tratarCredenciaisInvalidas(BadCredentialsException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("error", "Não autorizado");
+        erro.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -43,7 +52,6 @@ public class GlobalExceptionHandler {
         Map<String, Object> resposta = new HashMap<>();
         resposta.put("error", "Erro de validação");
 
-        // Pega a primeira mensagem de erro para toast simplificado
         String primeiraMensagem = ex.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(FieldError::getDefaultMessage)
@@ -63,8 +71,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> tratarGenerico(Exception ex) {
         Map<String, String> erro = new HashMap<>();
         erro.put("error", "Erro interno do servidor");
-        erro.put("message", ex.getMessage());
+        erro.put("message", ex.getMessage() != null ? ex.getMessage() : "Ocorreu um erro inesperado.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(erro);
     }
 }
-

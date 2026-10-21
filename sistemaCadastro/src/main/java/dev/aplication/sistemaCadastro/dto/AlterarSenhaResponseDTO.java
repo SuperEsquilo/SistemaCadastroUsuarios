@@ -1,4 +1,10 @@
 package dev.aplication.sistemaCadastro.dto;
 
-public class AlterarSenhaResponseDTO {
+public record AlterarSenhaResponseDTO(
+        boolean sucesso,
+        String mensagem
+) {
+    public static AlterarSenhaResponseDTO ok(String mensagem) {
+        return new AlterarSenhaResponseDTO(true, mensagem);
+    }
 }

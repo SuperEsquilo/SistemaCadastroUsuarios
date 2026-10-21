@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080/login";
+const API_BASE_URL = "http://localhost:8080";
 const formLogin = document.getElementById("form-login");
 const emailInput = document.getElementById("email-login");
 const senhaInput = document.getElementById("senha-login");
@@ -210,7 +210,7 @@ async function validarLogin(event) {
     if (botaoLogin) botaoLogin.disabled = true;
 
     try {
-        const resposta = await fetch(new URL("usuarios/login", API_BASE_URL), {
+        const resposta = await fetch(`${API_BASE_URL}/usuarios/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -305,7 +305,7 @@ if (rgCadastro) {
 }
 
 async function enviarCadastro(dados) {
-    const resposta = await fetch(new URL("/usuarios", API_BASE_URL), {
+    const resposta = await fetch(`${API_BASE_URL}/usuarios`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

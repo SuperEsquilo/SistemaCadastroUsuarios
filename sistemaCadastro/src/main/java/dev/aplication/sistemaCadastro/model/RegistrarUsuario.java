@@ -1,5 +1,6 @@
 package dev.aplication.sistemaCadastro.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,14 +8,14 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "registrarUsuario")
+@Table(name = "registrar_usuario")
 public class RegistrarUsuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usuario_id")
     private Integer id;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId
     @JoinColumn(name = "usuario_id")
@@ -30,6 +31,13 @@ public class RegistrarUsuario {
     private Boolean ativo = true;
 
     public RegistrarUsuario() {
+    }
+
+    public RegistrarUsuario(Usuario usuario, String email, String senha, Boolean ativo) {
+        this.usuario = usuario;
+        this.email = email;
+        this.senha = senha;
+        this.ativo = ativo != null ? ativo : true;
     }
 
     public Integer getId() {

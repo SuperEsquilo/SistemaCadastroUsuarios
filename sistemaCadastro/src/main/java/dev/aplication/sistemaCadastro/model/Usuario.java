@@ -1,7 +1,11 @@
 package dev.aplication.sistemaCadastro.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -36,11 +40,15 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_usuario", nullable = false, length = 25)
-    private TipoUsuario tipoUsuario;
+    private TipoUsuario tipoUsuario = TipoUsuario.USUARIO;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
-    private StatusUsuario status;
+    private StatusUsuario status = StatusUsuario.ATIVO;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private RegistrarUsuario registrarUsuario;
 
     @CreationTimestamp
     @Column(name = "criado_em", nullable = false, updatable = false)
@@ -103,7 +111,7 @@ public class Usuario {
     }
 
     public void setTipoUsuario(TipoUsuario tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
+        this.tipoUsuario = tipoUsuario != null ? tipoUsuario : TipoUsuario.USUARIO;
     }
 
     public StatusUsuario getStatus() {
@@ -111,15 +119,34 @@ public class Usuario {
     }
 
     public void setStatus(StatusUsuario status) {
-        this.status = status;
+        this.status = status != null ? status : StatusUsuario.ATIVO;
+    }
+
+    public RegistrarUsuario getRegistrarUsuario() {
+        return registrarUsuario;
+    }
+
+    public void setRegistrarUsuario(RegistrarUsuario registrarUsuario) {
+        this.registrarUsuario = registrarUsuario;
+        if (registrarUsuario != null) {
+            registrarUsuario.setUsuario(this);
+        }
     }
 
     public LocalDateTime getCriadoEm() {
         return criadoEm;
     }
 
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
     public LocalDateTime getAtualizadoEm() {
         return atualizadoEm;
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 
     @Override
@@ -140,6 +167,7 @@ public class Usuario {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", email='" + email + '\'' +
+                ", tipoUsuario=" + tipoUsuario +
                 ", status=" + status +
                 '}';
     }

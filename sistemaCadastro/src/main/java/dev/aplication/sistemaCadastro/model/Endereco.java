@@ -1,4 +1,3 @@
-
 package dev.aplication.sistemaCadastro.model;
 
 import jakarta.persistence.*;
@@ -27,7 +26,7 @@ public class Endereco {
     @Column(name = "numero", nullable = false, length = 10)
     private String numero;
 
-    @Column(name = "complemento", nullable = false, length = 60)
+    @Column(name = "complemento", length = 60)
     private String complemento;
 
     @Column(name = "bairro", nullable = false, length = 120)
@@ -45,12 +44,15 @@ public class Endereco {
     private String cep;
 
     @CreationTimestamp
-    @Column(name = "criado_em", nullable = false)
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
     @UpdateTimestamp
     @Column(name = "atualizado_em", nullable = false)
     private LocalDateTime atualizadoEm;
+
+    public Endereco() {
+    }
 
     public Integer getId() {
         return id;
@@ -120,7 +122,15 @@ public class Endereco {
         return criadoEm;
     }
 
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
     public LocalDateTime getAtualizadoEm() {
         return atualizadoEm;
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 }

@@ -1,8 +1,6 @@
 package dev.aplication.sistemaCadastro.controller;
 
-import dev.aplication.sistemaCadastro.dto.AlterarSenhaResponseDTO;
-import dev.aplication.sistemaCadastro.dto.RegistrarUsuarioRequestDTO;
-import dev.aplication.sistemaCadastro.dto.RegistrarUsuarioResponseDTO;
+import dev.aplication.sistemaCadastro.dto.*;
 import dev.aplication.sistemaCadastro.service.RegistrarUsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,12 +19,27 @@ public class RegistrarUsuarioController {
 
     @PostMapping("/registrar")
     public ResponseEntity<RegistrarUsuarioResponseDTO> registrar(@Valid @RequestBody RegistrarUsuarioRequestDTO dto) {
-        RegistrarUsuarioResponseDTO resposne = registrarUsuarioService.registrar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resposne);
+        RegistrarUsuarioResponseDTO response = registrarUsuarioService.registrar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO dto) {
+        LoginResponseDTO response = registrarUsuarioService.autenticar(dto);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{usuarioId}/senha")
-    public ResponseEntity<Void> alterarSenha(@PathVariable Integer usuarioId, @Valid @RequestBody AlterarSenhaResponseDTO dto) {
-        return null;
+    public ResponseEntity<AlterarSenhaResponseDTO> alterarSenhaPost(
+            @PathVariable Integer usuarioId,
+            @Valid @RequestBody AlterarSenhaRequestDTO dto) {
+        return ResponseEntity.ok(registrarUsuarioService.alterarSenha(usuarioId, dto));
+    }
+
+    @PatchMapping("/{usuarioId}/senha")
+    public ResponseEntity<AlterarSenhaResponseDTO> alterarSenhaPatch(
+            @PathVariable Integer usuarioId,
+            @Valid @RequestBody AlterarSenhaRequestDTO dto) {
+        return ResponseEntity.ok(registrarUsuarioService.alterarSenha(usuarioId, dto));
     }
 }

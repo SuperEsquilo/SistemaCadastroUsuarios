@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Integer> {
+
     List<Endereco> findByCep(String cep);
 
     List<Endereco> findByCidadeIgnoreCase(String cidade);
@@ -46,7 +47,7 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Integer> {
               AND (:uf IS NULL OR e.uf = :uf)
               AND (:bairro IS NULL OR LOWER(e.bairro) LIKE LOWER(CONCAT('%', :bairro, '%')))
             """)
-    Page<Endereco> buscarComFlitros(@Param("cidade") String cidade,
+    Page<Endereco> buscarComFiltros(@Param("cidade") String cidade,
                                     @Param("uf") String uf,
                                     @Param("bairro") String bairro,
                                     Pageable pageable);

@@ -20,6 +20,10 @@ public record UsuarioResponseDTO(
         LocalDateTime atualizadoEm
 ) {
     public static UsuarioResponseDTO fromEntity(Usuario u) {
+        Boolean ativo = (u.getRegistrarUsuario() != null)
+                ? u.getRegistrarUsuario().getAtivo()
+                : (u.getStatus() == StatusUsuario.ATIVO);
+
         return new UsuarioResponseDTO(
                 u.getId(),
                 u.getNome(),
@@ -29,7 +33,7 @@ public record UsuarioResponseDTO(
                 u.getRg(),
                 u.getTipoUsuario(),
                 u.getStatus(),
-                u.getStatus() == StatusUsuario.ATIVO, // derivado do status
+                ativo,
                 u.getCriadoEm(),
                 u.getAtualizadoEm()
         );

@@ -47,6 +47,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/auth/**").permitAll()
+                .requestMatchers("/usuarios/**").permitAll()
+                .requestMatchers("/endereco/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().permitAll()
             )
@@ -63,4 +67,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
