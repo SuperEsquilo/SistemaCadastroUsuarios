@@ -245,7 +245,15 @@ async function validarLogin(event) {
             return;
         }
 
-        showToast("Login realizado com sucesso!", "success");
+        showToast("Login realizado com sucesso! Redirecionando...", "success");
+
+        // Salva os dados do usuário logado e redireciona para o dashboard
+        if (resultado) {
+            sessionStorage.setItem("usuarioLogado", JSON.stringify(resultado));
+        }
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 1200);
     } catch (erro) {
         const mensagem =
             erro instanceof TypeError

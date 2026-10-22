@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Client — Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="shortcut icon" href="assets/IconCadastroLogo.ico" type="image/x-icon">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- ════════════════════════════════════════════
+         SIDEBAR
+    ════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar" aria-label="Menu lateral">
+        <!-- Marca -->
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-icon">
+                <img src="assets/IconCadastroLogo.png" alt="Logo" width="22" height="22">
+            </div>
+            <div class="sidebar-brand-text">
+                <span class="sidebar-brand-name">Sky Client</span>
+                <span class="sidebar-brand-sub">Gestão</span>
+            </div>
+        </div>
+
+        <!-- Separador -->
+        <div class="sidebar-divider"></div>
+
+        <!-- Navegação -->
+        <nav class="sidebar-nav" aria-label="Navegação">
+            <p class="sidebar-nav-label">MENU</p>
+
+            <a class="sidebar-link active" data-section="visao-geral" href="#" aria-current="page">
+                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                <span>Visão Geral</span>
+            </a>
+
+            <a class="sidebar-link" data-section="usuarios" href="#">
+                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Usuários</span>
+            </a>
+
+            <a class="sidebar-link admin-only hidden" data-section="administracao" href="#">
+                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Administração</span>
+            </a>
+        </nav>
+
+        <!-- Rodapé da sidebar: perfil do usuário -->
+        <div class="sidebar-footer">
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar-initials">U</div>
+                <div class="sidebar-user-info">
+                    <span id="dash-nome-usuario" class="sidebar-user-name">Carregando…</span>
+                    <span id="dash-tag-usuario" class="badge-perfil">--</span>
+                </div>
+                <button id="btn-logout" class="sidebar-logout-btn" title="Sair do sistema" aria-label="Sair">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ════════════════════════════════════════════
+         OVERLAY (mobile)
+    ════════════════════════════════════════════ -->
+    <div class="sidebar-overlay" id="sidebar-overlay" hidden aria-hidden="true"></div>
+
+    <!-- ════════════════════════════════════════════
+         ÁREA DE CONTEÚDO
+    ════════════════════════════════════════════ -->
+    <div class="content-area">
+
+        <!-- Topbar -->
+        <header class="topbar" role="banner">
+            <div class="topbar-left">
+                <button class="btn-sidebar-toggle" id="btn-menu-mobile" aria-label="Alternar menu" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <div class="topbar-breadcrumb">
+                    <span id="topbar-page-title">Visão Geral</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button id="btn-novo-usuario" class="btn-primary btn-sm admin-only hidden" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Novo Usuário
+                </button>
+            </div>
+        </header>
+
+        <!-- Conteúdo principal -->
+        <main class="main-content" id="main-content">
+
+            <!-- ════════════════════════════════
+                 SEÇÃO: VISÃO GERAL
+            ════════════════════════════════ -->
+            <section id="section-visao-geral" class="dash-section active" aria-label="Visão geral">
+
+                <!-- Cabeçalho da seção -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Olá, <span id="welcome-nome">Usuário</span> 👋</h1>
+                        <p class="page-subtitle" id="welcome-desc">Aqui está o resumo do sistema.</p>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-card-body">
+                            <div class="kpi-info">
+                                <span class="kpi-label">Total de Clientes</span>
+                                <span class="kpi-value" id="total-usuarios">—</span>
+                            </div>
+                            <div class="kpi-icon kpi-icon--blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-tag kpi-tag--blue">Todos os cadastros</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-card-body">
+                            <div class="kpi-info">
+                                <span class="kpi-label">Clientes Ativos</span>
+                                <span class="kpi-value" id="total-ativos">—</span>
+                            </div>
+                            <div class="kpi-icon kpi-icon--green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-tag kpi-tag--green">Status ativo</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-card-body">
+                            <div class="kpi-info">
+                                <span class="kpi-label">Clientes Inativos</span>
+                                <span class="kpi-value" id="total-inativos">—</span>
+                            </div>
+                            <div class="kpi-icon kpi-icon--amber">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-tag kpi-tag--amber">Requerem atenção</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card admin-only hidden">
+                        <div class="kpi-card-body">
+                            <div class="kpi-info">
+                                <span class="kpi-label">Administradores</span>
+                                <span class="kpi-value" id="total-admins">—</span>
+                            </div>
+                            <div class="kpi-icon kpi-icon--violet">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-tag kpi-tag--violet">Acesso total</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela resumida na visão geral -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Clientes Recentes</h2>
+                        <a class="link-ver-todos" data-section="usuarios" href="#">Ver todos →</a>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" aria-label="Clientes recentes">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-recentes-body">
+                                <tr><td colspan="4" class="td-empty">Carregando…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════
+                 SEÇÃO: USUÁRIOS
+            ════════════════════════════════ -->
+            <section id="section-usuarios" class="dash-section" aria-label="Lista de usuários" hidden>
+
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Clientes</h1>
+                        <p class="page-subtitle">Gerencie todos os usuários cadastrados no sistema.</p>
+                    </div>
+                    <button id="btn-novo-usuario-2" class="btn-primary admin-only hidden" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Novo Cliente
+                    </button>
+                </div>
+
+                <!-- Filtros e busca -->
+                <div class="toolbar">
+                    <div class="search-group">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input id="busca-usuario" type="search" class="input-search" placeholder="Buscar por nome, e-mail ou ID…"
+                            autocomplete="off" aria-label="Buscar usuário">
+                    </div>
+                    <div class="filter-group">
+                        <select id="filtro-status" class="input-filter" aria-label="Filtrar por status">
+                            <option value="">Todos os status</option>
+                            <option value="ATIVO">Ativos</option>
+                            <option value="INATIVO">Inativos</option>
+                        </select>
+                        <select id="filtro-tipo" class="input-filter" aria-label="Filtrar por tipo">
+                            <option value="">Todos os tipos</option>
+                            <option value="ADMINISTRADOR">Administrador</option>
+                            <option value="USUARIO">Usuário</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tabela principal -->
+                <div class="card card--no-pad">
+                    <div class="table-loading hidden" id="dash-loading">
+                        <div class="spinner"></div>
+                        <span>Carregando registros…</span>
+                    </div>
+
+                    <div class="table-wrapper" id="table-wrapper-main">
+                        <table class="data-table" id="tabela-usuarios" aria-label="Lista de usuários">
+                            <thead>
+                                <tr>
+                                    <th data-sort="id" class="th-sortable">
+                                        ID <span class="sort-icon">↕</span>
+                                    </th>
+                                    <th data-sort="nome" class="th-sortable">
+                                        Nome <span class="sort-icon">↕</span>
+                                    </th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th data-sort="tipoUsuario" class="th-sortable">
+                                        Tipo <span class="sort-icon">↕</span>
+                                    </th>
+                                    <th data-sort="status" class="th-sortable">
+                                        Status <span class="sort-icon">↕</span>
+                                    </th>
+                                    <th class="admin-only hidden th-acoes">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-usuarios-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <div class="pagination-bar" id="paginacao">
+                        <span class="pagination-info" id="pag-info">—</span>
+                        <div class="pagination-controls">
+                            <button class="btn-pag" id="btn-pag-anterior" aria-label="Página anterior" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                            </button>
+                            <div class="pagination-pages" id="pag-pages"></div>
+                            <button class="btn-pag" id="btn-pag-proximo" aria-label="Próxima página" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p id="dash-erro" class="dash-erro" hidden></p>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════
+                 SEÇÃO: ADMINISTRAÇÃO (só ADMIN)
+            ════════════════════════════════ -->
+            <section id="section-administracao" class="dash-section admin-only hidden" aria-label="Administração" hidden>
+
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Administração</h1>
+                        <p class="page-subtitle">Ações avançadas de gerenciamento de contas.</p>
+                    </div>
+                </div>
+
+                <div class="admin-grid">
+                    <!-- Ativar -->
+                    <div class="admin-card">
+                        <div class="admin-card-head">
+                            <div class="admin-icon admin-icon--green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="admin-card-title">Ativar Conta</h3>
+                                <p class="admin-card-desc">Reative uma conta suspensa pelo ID.</p>
+                            </div>
+                        </div>
+                        <div class="admin-form">
+                            <input id="input-id-ativar" type="number" class="input-field" placeholder="ID do usuário" min="1">
+                            <button class="btn-action btn-success" data-acao="ativar">Ativar</button>
+                        </div>
+                    </div>
+
+                    <!-- Desativar -->
+                    <div class="admin-card">
+                        <div class="admin-card-head">
+                            <div class="admin-icon admin-icon--amber">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="admin-card-title">Desativar Conta</h3>
+                                <p class="admin-card-desc">Suspenda temporariamente o acesso.</p>
+                            </div>
+                        </div>
+                        <div class="admin-form">
+                            <input id="input-id-desativar" type="number" class="input-field" placeholder="ID do usuário" min="1">
+                            <button class="btn-action btn-warning" data-acao="desativar">Desativar</button>
+                        </div>
+                    </div>
+
+                    <!-- Alterar tipo -->
+                    <div class="admin-card">
+                        <div class="admin-card-head">
+                            <div class="admin-icon admin-icon--blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="admin-card-title">Alterar Perfil</h3>
+                                <p class="admin-card-desc">Promova ou rebaixe um nível de acesso.</p>
+                            </div>
+                        </div>
+                        <div class="admin-form">
+                            <input id="input-id-tipo" type="number" class="input-field" placeholder="ID do usuário" min="1">
+                            <select id="select-tipo" class="input-field">
+                                <option value="">Selecione o tipo</option>
+                                <option value="ADMINISTRADOR">Administrador</option>
+                                <option value="USUARIO">Usuário</option>
+                            </select>
+                            <button class="btn-action btn-info" data-acao="tipo">Alterar</button>
+                        </div>
+                    </div>
+
+                    <!-- Excluir -->
+                    <div class="admin-card admin-card--danger">
+                        <div class="admin-card-head">
+                            <div class="admin-icon admin-icon--red">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                    <path d="M10 11v6"/><path d="M14 11v6"/>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="admin-card-title">Excluir Conta</h3>
+                                <p class="admin-card-desc">Remove permanentemente um registro.</p>
+                            </div>
+                        </div>
+                        <div class="admin-form">
+                            <input id="input-id-deletar" type="number" class="input-field" placeholder="ID do usuário" min="1">
+                            <button class="btn-action btn-danger" data-acao="deletar">Excluir</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         DRAWER: detalhe do cliente (readonly)
+    ════════════════════════════════════════════ -->
+    <aside id="drawer-detalhe" class="drawer" hidden aria-label="Detalhes do cliente" aria-modal="true">
+        <div class="drawer-header">
+            <h3 class="drawer-title">Detalhes do Cliente</h3>
+            <button id="drawer-fechar" class="btn-icon" aria-label="Fechar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-avatar-area">
+                <div class="drawer-avatar" id="drawer-avatar">U</div>
+                <div>
+                    <p class="drawer-user-name" id="drawer-nome">—</p>
+                    <span class="status-badge" id="drawer-status-badge">—</span>
+                </div>
+            </div>
+
+            <div class="drawer-fields">
+                <div class="drawer-field">
+                    <span class="drawer-field-label">ID</span>
+                    <span class="drawer-field-value" id="drawer-id">—</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-field-label">E-mail</span>
+                    <span class="drawer-field-value" id="drawer-email">—</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-field-label">Telefone</span>
+                    <span class="drawer-field-value" id="drawer-telefone">—</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-field-label">CPF</span>
+                    <span class="drawer-field-value" id="drawer-cpf">—</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-field-label">RG</span>
+                    <span class="drawer-field-value" id="drawer-rg">—</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-field-label">Tipo de Perfil</span>
+                    <span class="drawer-field-value" id="drawer-tipo">—</span>
+                </div>
+            </div>
+
+            <!-- Ações rápidas no drawer (somente ADMIN) -->
+            <div class="drawer-actions admin-only hidden" id="drawer-acoes">
+                <button class="btn-action btn-success btn-sm" id="drawer-btn-ativar">Ativar</button>
+                <button class="btn-action btn-warning btn-sm" id="drawer-btn-desativar">Desativar</button>
+                <button class="btn-action btn-danger btn-sm" id="drawer-btn-deletar">Excluir</button>
+            </div>
+        </div>
+    </aside>
+    <div class="drawer-overlay hidden" id="drawer-overlay" aria-hidden="true"></div>
+
+    <!-- ════════════════════════════════════════════
+         MODAL: CRIAR USUÁRIO (só ADMIN)
+    ════════════════════════════════════════════ -->
+    <div id="modal-usuario" class="modal-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="modal-titulo">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-titulo" class="modal-title">Novo Cliente</h3>
+                <button id="modal-fechar" class="btn-icon" aria-label="Fechar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="form-modal" class="modal-form" novalidate>
+                <input type="hidden" id="modal-id">
+                <div class="modal-grid">
+                    <div class="form-field">
+                        <label for="m-nome">Nome completo *</label>
+                        <input id="m-nome" type="text" class="input-field" placeholder="Ex: João Silva" autocomplete="name">
+                    </div>
+                    <div class="form-field">
+                        <label for="m-email">E-mail *</label>
+                        <input id="m-email" type="email" class="input-field" placeholder="email@empresa.com" autocomplete="email">
+                    </div>
+                    <div class="form-field">
+                        <label for="m-telefone">Telefone *</label>
+                        <input id="m-telefone" type="tel" class="input-field" placeholder="(11) 99999-9999" autocomplete="tel">
+                    </div>
+                    <div class="form-field">
+                        <label for="m-cpf">CPF *</label>
+                        <input id="m-cpf" type="text" class="input-field" placeholder="000.000.000-00" maxlength="14">
+                    </div>
+                    <div class="form-field">
+                        <label for="m-rg">RG *</label>
+                        <input id="m-rg" type="text" class="input-field" placeholder="00.000.000-0" maxlength="12">
+                    </div>
+                    <div class="form-field">
+                        <label for="m-senha">Senha *</label>
+                        <input id="m-senha" type="password" class="input-field" placeholder="Mínimo 6 caracteres" maxlength="8" autocomplete="new-password">
+                    </div>
+                    <div class="form-field form-field--full">
+                        <label for="m-tipo">Tipo de Perfil *</label>
+                        <select id="m-tipo" class="input-field">
+                            <option value="" disabled selected>Selecione…</option>
+                            <option value="ADMINISTRADOR">Administrador</option>
+                            <option value="USUARIO">Usuário</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="modal-cancelar" class="btn-ghost">Cancelar</button>
+                    <button type="submit" id="modal-salvar" class="btn-primary">Criar Conta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         MODAL: CONFIRMAÇÃO
+    ════════════════════════════════════════════ -->
+    <div id="modal-confirmar" class="modal-overlay" hidden aria-modal="true" role="alertdialog"
+        aria-labelledby="confirm-titulo">
+        <div class="modal-box modal-box--sm">
+            <div class="modal-header">
+                <h3 id="confirm-titulo" class="modal-title">Confirmar ação</h3>
+            </div>
+            <p id="confirm-mensagem" class="confirm-msg"></p>
+            <div class="modal-footer">
+                <button id="confirm-cancelar" class="btn-ghost">Cancelar</button>
+                <button id="confirm-ok" class="btn-action btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-dash" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Menu mobile oculto (mantido para compatibilidade com dashboard.js) -->
+    <div id="mobile-menu" hidden></div>
+
+    <script src="dashboard.js"></script>
+    <script>
+        /* Extensões de UI não cobertas pelo dashboard.js existente */
+
+        /* ── Drawer: abrir ao clicar na linha ── */
+        document.addEventListener('click', e => {
+            const row = e.target.closest('tr[data-usuario-id]');
+            if (!row) return;
+            const id = parseInt(row.dataset.usuarioId);
+            const u = window._listaUsuarios?.find(x => x.id === id);
+            if (!u) return;
+            abrirDrawer(u);
+        });
+
+        function abrirDrawer(u) {
+            const drawer = document.getElementById('drawer-detalhe');
+            const overlay = document.getElementById('drawer-overlay');
+
+            document.getElementById('drawer-nome').textContent = u.nome || '—';
+            document.getElementById('drawer-id').textContent = u.id ?? '—';
+            document.getElementById('drawer-email').textContent = u.email || '—';
+            document.getElementById('drawer-telefone').textContent = formatarTelefone(u.telefone) || '—';
+            document.getElementById('drawer-cpf').textContent = formatarCPF(u.cpf) || '—';
+            document.getElementById('drawer-rg').textContent = u.rg || '—';
+            document.getElementById('drawer-tipo').textContent = u.tipoUsuario || '—';
+
+            const avatarEl = document.getElementById('drawer-avatar');
+            avatarEl.textContent = (u.nome || 'U')[0].toUpperCase();
+
+            const stEl = document.getElementById('drawer-status-badge');
+            const ativo = (u.status || '').toUpperCase() === 'ATIVO';
+            stEl.textContent = u.status || '—';
+            stEl.className = `status-badge ${ativo ? 'status-ativo' : 'status-inativo'}`;
+
+            // Ações drawer (admin)
+            const btnAtivar   = document.getElementById('drawer-btn-ativar');
+            const btnDesativar= document.getElementById('drawer-btn-desativar');
+            const btnDeletar  = document.getElementById('drawer-btn-deletar');
+            btnAtivar.onclick   = () => { fecharDrawer(); window.ativarDesativar(u.id, true); };
+            btnDesativar.onclick= () => { fecharDrawer(); window.ativarDesativar(u.id, false); };
+            btnDeletar.onclick  = () => { fecharDrawer(); window.deletarUsuario(u.id, u.nome); };
+
+            drawer.hidden = false;
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharDrawer() {
+            document.getElementById('drawer-detalhe').hidden = true;
+            document.getElementById('drawer-overlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('drawer-fechar').addEventListener('click', fecharDrawer);
+        document.getElementById('drawer-overlay').addEventListener('click', fecharDrawer);
+
+        /* ── Sidebar overlay (mobile) ── */
+        document.getElementById('sidebar-overlay').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('sidebar--open');
+            document.getElementById('sidebar-overlay').hidden = true;
+        });
+
+        /* ── Filtros de status e tipo ── */
+        ['filtro-status', 'filtro-tipo'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', aplicarFiltros);
+        });
+
+        function aplicarFiltros() {
+            const busca  = (document.getElementById('busca-usuario')?.value || '').toLowerCase();
+            const status = document.getElementById('filtro-status')?.value || '';
+            const tipo   = document.getElementById('filtro-tipo')?.value || '';
+
+            const lista = window._listaUsuarios || [];
+            const filtrado = lista.filter(u => {
+                const matchBusca  = !busca  || (u.nome || '').toLowerCase().includes(busca)
+                    || (u.email || '').toLowerCase().includes(busca) || String(u.id).includes(busca);
+                const matchStatus = !status || (u.status || '').toUpperCase() === status;
+                const matchTipo   = !tipo   || (u.tipoUsuario || '').toUpperCase() === tipo;
+                return matchBusca && matchStatus && matchTipo;
+            });
+
+            window._renderComPaginacao(filtrado);
+        }
+
+        /* Helpers de formatação */
+        function formatarTelefone(v) {
+            if (!v) return v;
+            const d = v.replace(/\D/g, '');
+            if (d.length === 11) return d.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            if (d.length === 10) return d.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+            return v;
+        }
+
+        function formatarCPF(v) {
+            if (!v) return v;
+            const d = v.replace(/\D/g, '');
+            if (d.length === 11) return d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+            return v;
+        }
+
+        /* ── Topbar: atualiza título com a seção ativa ── */
+        const pageTitles = {
+            'visao-geral': 'Visão Geral',
+            'usuarios':    'Clientes',
+            'administracao': 'Administração'
+        };
+        const origAtivarSecao = window.ativarSecao;
+
+        /* Sobrescreve para também atualizar o topbar e fechar drawer */
+        document.querySelectorAll('.sidebar-link, .link-ver-todos').forEach(link => {
+            link.addEventListener('click', () => {
+                fecharDrawer();
+                const sec = link.dataset.section;
+                if (sec) {
+                    document.getElementById('topbar-page-title').textContent =
+                        pageTitles[sec] || sec;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

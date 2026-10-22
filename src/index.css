@@ -18,23 +18,51 @@ body {
 }
 
 :root {
+    /* ── Sombras ─────────────────────────────────────────── */
     --shadow-box-principal: 0 1px 2px rgba(0, 0, 0, 0.04),
-    0 4px 8px rgba(0, 0, 0, 0.06),
-    0 12px 24px rgba(0, 0, 0, 0.08),
-    0 24px 48px rgba(0, 0, 0, 0.10);
+        0 4px 8px rgba(0, 0, 0, 0.06),
+        0 12px 24px rgba(0, 0, 0, 0.08),
+        0 24px 48px rgba(0, 0, 0, 0.10);
 
     --shadow-input: inset 3px 2px 7px rgba(0, 0, 0, 0.2);
 
-    --color-text-p: #2121212a;
-    --color-text-input: #212121;
+    /* ── Cores base ──────────────────────────────────────── */
+    --color-black:          #212121;    /* preto principal */
+    --color-black-hover:    #424242;    /* preto ao passar o mouse */
+    --color-white:          #ffffff;    /* branco puro */
 
-    /* Background gradiente */
-    --background-primary-color: #95abab;
-    --background-secundary-color: #5d96bd;
+    /* ── Cores de texto ──────────────────────────────────── */
+    --color-text-heading:   #212121;    /* títulos e labels */
+    --color-text-input:     #212121;    /* texto dentro dos inputs */
+    --color-text-label:     #212121;    /* labels de formulário */
+    --color-text-muted:     #757575;    /* placeholder e textos secundários */
+    --color-text-subtitle:  #2121212a; /* subtítulo esmaecido (p de LOGIN/REGISTRAR) */
+
+    /* ── Cores de fundo ──────────────────────────────────── */
+    --color-bg-page:        #ffffff;    /* fundo do card central (.box) */
+    --color-bg-select:      #ffffff;    /* fundo do <select> */
+
+    /* ── Gradiente de fundo da página ────────────────────── */
+    --color-gradient-start: #95abab;    /* início do gradiente (baixo) */
+    --color-gradient-end:   #5d96bd;    /* fim do gradiente (topo) */
+
+    /* ── Botão primário (Entrar / Criar conta) ───────────── */
+    --color-btn-primary-bg:       #212121;  /* fundo */
+    --color-btn-primary-text:     #ffffff;  /* texto */
+    --color-btn-primary-bg-hover: #424242;  /* fundo ao hover */
+
+    /* ── Botão secundário (Registrar / Voltar) ───────────── */
+    --color-btn-secondary-bg:       #e8e8e8; /* fundo */
+    --color-btn-secondary-text:     #212121; /* texto */
+    --color-btn-secondary-bg-hover: #d2d2d2; /* fundo ao hover */
+
+    /* ── Select — opção selecionada ──────────────────────── */
+    --color-select-checked-bg:   #212121;   /* fundo da opção marcada */
+    --color-select-checked-text: #ffffff;   /* texto da opção marcada */
 }
 
 body {
-    background: linear-gradient(to top, var(--background-primary-color), var(--background-secundary-color));
+    background: linear-gradient(to top, var(--color-gradient-start), var(--color-gradient-end));
     background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
@@ -94,11 +122,12 @@ body {
     font-weight: 500;
     font-size: clamp(1.35rem, 5vw, 2rem);
     text-align: center;
+    color: var(--color-text-heading);
 }
 
 .box-login p {
     font-family: "Commissioner", sans-serif;
-    color: var(--color-text-p);
+    color: var(--color-text-subtitle);
     margin-bottom: 30px;
 }
 
@@ -116,7 +145,7 @@ body {
     margin-bottom: 6px;
     font-family: "Commissioner", sans-serif;
     font-size: 0.8rem;
-    color: var(--color-text-input);
+    color: var(--color-text-label);
 }
 
 .box-login .form-group input {
@@ -127,10 +156,11 @@ body {
     outline: none;
     font-family: "Commissioner", sans-serif;
     width: 100%;
+    color: var(--color-text-input);
 }
 
 .box-login .form-group input::placeholder {
-    color: #757575;
+    color: var(--color-text-muted);
     opacity: 1;
 }
 
@@ -147,25 +177,25 @@ body {
     font-family: "Commissioner", sans-serif;
     box-sizing: border-box;
     width: 100%;
-    background-color: #fff;
+    background-color: var(--color-bg-select);
     color: var(--color-text-input);
     cursor: pointer;
 }
 
 .box-login .form-group select:invalid {
-    color: #757575;
+    color: var(--color-text-muted);
 }
 
 .box-login .form-group select option {
-    background-color: #fff;
-    color: #212121;
+    background-color: var(--color-bg-select);
+    color: var(--color-text-heading);
     font-family: "Commissioner", sans-serif;
 }
 
 /* Opção selecionada — o suporte visual varia entre navegadores */
 .box-login .form-group select option:checked {
-    background-color: #212121;
-    color: #fff;
+    background-color: var(--color-select-checked-bg);
+    color: var(--color-select-checked-text);
 }
 
 .group-btn {
@@ -188,24 +218,23 @@ body {
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-
 .btn-entrar {
-    background-color: #212121;
-    color: #fff;
+    background-color: var(--color-btn-primary-bg);
+    color: var(--color-btn-primary-text);
 }
 
 .btn-entrar:hover {
-    background-color: #424242;
+    background-color: var(--color-btn-primary-bg-hover);
     transform: translateY(-2px);
 }
 
 .btn-registrar {
-    background-color: #e8e8e8;
-    color: #212121;
+    background-color: var(--color-btn-secondary-bg);
+    color: var(--color-btn-secondary-text);
 }
 
 .btn-registrar:hover {
-    background-color: #d2d2d2;
+    background-color: var(--color-btn-secondary-bg-hover);
     transform: translateY(-2px);
 }
 
@@ -221,7 +250,7 @@ body {
 .box {
     position: relative;
     z-index: 1;
-    background: #fff;
+    background: var(--color-bg-page);
 }
 
 @media (max-width: 360px) {
